@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "es6",
+        "module": "none",
         "target": "es6",
         "noImplicitAny": true,
         "inlineSourceMap": true,
