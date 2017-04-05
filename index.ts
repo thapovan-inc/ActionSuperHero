@@ -175,7 +175,7 @@ const isClass = (func: any) => {
         && /^class\s/.test(Function.prototype.toString.call(func));
 };
 
-export const setupInitilizer = (moduleVar: any) => {
+export const setupInitializer = (moduleVar: any) => {
     moduleVar.exports = {
         loadPriority: 600,
         initialize: (api: any, next: any) => {
