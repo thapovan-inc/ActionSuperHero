@@ -20,6 +20,7 @@ export namespace internal {
         logLevel?: string;
         matchExtensionMimeType?: boolean;
         toDocument?: boolean;
+        checkSession?: boolean;
     }
 
     export interface IActionMiddlewareInfo {
@@ -31,6 +32,7 @@ export namespace internal {
     export interface IRouteInfo {
         path: string;
         method: string;
+        matchTrailingPathParts?:boolean;
     }
 
     export interface IConstructable<T> {
@@ -87,12 +89,12 @@ export interface IActionMiddlewareRequestData extends IActionRequestData {
 }
 
 export interface IAction {
-    run(api: object, data: IActionRequestData, next: ChainedFunction): void;
+    run(api: Api, data: IActionRequestData, next: ChainedFunction): Promise<any>;
 }
 
 export interface IActionMiddleware {
-    preProcessor?: (data: IActionMiddlewareRequestData, next: ChainedFunction) => void;
-    postProcessor?: (data: IActionMiddlewareRequestData, next: ChainedFunction) => void;
+    preProcessor?: (data: IActionMiddlewareRequestData, next: ChainedFunction) => Promise<any>;
+    postProcessor?: (data: IActionMiddlewareRequestData, next: ChainedFunction) => Promise<any>;
 }
 
 export function Action(actionInfo: internal.IActionInfo) {
@@ -144,6 +146,9 @@ export function Options(actionOptions: internal.IActionOptions) {
         }
         if (actionOptions.toDocument) {
             constructor.prototype.toDocument = actionOptions.toDocument;
+        }
+        if(actionOptions.checkSession) {
+            constructor.prototype.checkSession = true;
         }
     };
 }
@@ -216,7 +221,10 @@ export const setupInitializer = (moduleVar: any) => {
                     api.actions.versions[action.actionName].push(action.version);
                     api.actions.versions[action.actionName].sort();
                     api.actions.validateSuperAction(api.actions.actions[action.actionName][action.version]);
-
+                    if((<any>action).actionRoute) {
+                        const actionRoute = (<any>action).actionRoute as internal.IRouteInfo;
+                        api.routes.registerRoute(actionRoute.method, actionRoute.path, action.actionName, action.version, actionRoute.matchTrailingPathParts);
+                    }
                     // loadMessage(action);
                 } catch (error) {
                     try {
