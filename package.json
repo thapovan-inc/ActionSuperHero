@@ -1,7 +1,6 @@
 {
   "name": "actionsuperhero",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "1.0.1",
   "repository": "https://github.com/sdamodharan/ActionSuperHero.git",
   "author": "Sriram Damodharan <sdamodharan@thapovan-inc.com>",
   "license": "MIT",
@@ -15,8 +14,8 @@
     "@types/node": "^7.0.12",
     "typescript": "^2.2.2"
   },
-  "scripts" : {
-    "build" : "tsc",
-    "clean-dist" : "rm -r dist"
+  "scripts": {
+    "build": "tsc",
+    "clean-dist": "rm -r dist"
   }
 }
