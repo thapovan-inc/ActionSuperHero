@@ -1,39 +1,41 @@
 import { EventEmitter } from "events";
 
-interface IActionInfo {
-    actionName: string;
-    description: string;
-    middleware?: IActionMiddleware[];
-    version?: number;
-}
+export namespace internal {
+    export interface IActionInfo {
+        actionName: string;
+        description: string;
+        middleware?: IActionMiddleware[];
+        version?: number;
+    }
 
-interface IInputParam {
-    name: string;
-    required: boolean;
-    validator?: ValidatorFunction;
-    formatter?: FormatterFunction;
-    default?: DefaultValueProvider;
-}
+    export interface IInputParam {
+        name: string;
+        required: boolean;
+        validator?: ValidatorFunction;
+        formatter?: FormatterFunction;
+        default?: DefaultValueProvider;
+    }
 
-interface IActionOptions {
-    logLevel?: string;
-    matchExtensionMimeType?: boolean;
-    toDocument?: boolean;
-}
+    export interface IActionOptions {
+        logLevel?: string;
+        matchExtensionMimeType?: boolean;
+        toDocument?: boolean;
+    }
 
-interface IActionMiddlewareInfo {
-    middlewareName: string;
-    global?: boolean;
-    priority?: number;
-}
+    export interface IActionMiddlewareInfo {
+        middlewareName: string;
+        global?: boolean;
+        priority?: number;
+    }
 
-interface IRouteInfo {
-    path: string;
-    method: string;
-}
+    export interface IRouteInfo {
+        path: string;
+        method: string;
+    }
 
-interface IConstructable<T> {
-    new(): T;
+    export interface IConstructable<T> {
+        new (): T;
+    }
 }
 
 const SuperObjectEB = new EventEmitter();
@@ -44,7 +46,7 @@ enum ClassType {
 
 const SuperObjectEventType = {
     ACTION_LOADED: "ACTION_LOADED",
-    MIDDLEWARE_LOADED:  "MIDDLEWARE_LOADED",
+    MIDDLEWARE_LOADED: "MIDDLEWARE_LOADED",
 };
 
 // tslint:disable-next-line:ban-types
@@ -65,23 +67,23 @@ export type Api = any;
 export type ConnectionObject = any;
 
 export interface IActionRequestData {
-  connection: ConnectionObject;
-  action: string;
-  toProcess: boolean;
-  toRender: boolean;
-  messageCount: number;
-  params: any;
-  actionStartTime: number;
-  response: any;
-  attributes?: any;
+    connection: ConnectionObject;
+    action: string;
+    toProcess: boolean;
+    toRender: boolean;
+    messageCount: number;
+    params: any;
+    actionStartTime: number;
+    response: any;
+    attributes?: any;
 }
 export interface IActionMiddlewareRequestData extends IActionRequestData {
-  missingParams: any[];
-  validatorErrors: any[];
-  actionTemplate: any; // the actual object action definition
-  working: boolean;
-  duration: any;
-  actionStatus: any;
+    missingParams: any[];
+    validatorErrors: any[];
+    actionTemplate: any; // the actual object action definition
+    working: boolean;
+    duration: any;
+    actionStatus: any;
 }
 
 export interface IAction {
@@ -93,7 +95,7 @@ export interface IActionMiddleware {
     postProcessor?: (data: IActionMiddlewareRequestData, next: ChainedFunction) => void;
 }
 
-export function Action(actionInfo: IActionInfo) {
+export function Action(actionInfo: internal.IActionInfo) {
     // tslint:disable-next-line:ban-types
     return (constructor: Function) => {
         const runMethod = constructor.prototype.run;
@@ -109,7 +111,7 @@ export function Action(actionInfo: IActionInfo) {
     };
 }
 
-export function Input(inputParam: IInputParam) {
+export function Input(inputParam: internal.IInputParam) {
     const input: any = {};
     input.required = inputParam.required;
     if (inputParam.validator) {
@@ -131,7 +133,7 @@ export function Input(inputParam: IInputParam) {
     };
 }
 
-export function Options(actionOptions: IActionOptions) {
+export function Options(actionOptions: internal.IActionOptions) {
     // tslint:disable-next-line:ban-types
     return (constructor: Function) => {
         if (actionOptions.logLevel) {
@@ -146,14 +148,14 @@ export function Options(actionOptions: IActionOptions) {
     };
 }
 
-export function Route(routeInfo: IRouteInfo) {
+export function Route(routeInfo: internal.IRouteInfo) {
     // tslint:disable-next-line:ban-types
     return (constructor: Function) => {
         constructor.prototype.actionRoute = routeInfo;
     };
 }
 
-export function ActionMiddleware(actionMiddlewareInfo: IActionMiddlewareInfo) {
+export function ActionMiddleware(actionMiddlewareInfo: internal.IActionMiddlewareInfo) {
     // tslint:disable-next-line:ban-types
     return (constructor: Function) => {
         if (getObjectType(constructor) !== ClassType.UNKNOWN) {
@@ -200,8 +202,8 @@ export const setupInitilizer = (moduleVar: any) => {
                 }
             };
 
-            SuperObjectEB.on(SuperObjectEventType.ACTION_LOADED, (constructor: IConstructable<IActionInfo>) => {
-                const action: IActionInfo = new constructor();
+            SuperObjectEB.on(SuperObjectEventType.ACTION_LOADED, (constructor: internal.IConstructable<internal.IActionInfo>) => {
+                const action: internal.IActionInfo = new constructor();
                 try {
                     if (action.version === null || action.version === undefined) { action.version = 1.0; }
                     if (api.actions.actions[action.actionName] === null || api.actions.actions[action.actionName] === undefined) {
@@ -226,8 +228,8 @@ export const setupInitilizer = (moduleVar: any) => {
                 }
             });
 
-            SuperObjectEB.on(SuperObjectEventType.MIDDLEWARE_LOADED, (constructor: IConstructable<IActionMiddlewareInfo>) => {
-                const data: IActionMiddlewareInfo = new constructor();
+            SuperObjectEB.on(SuperObjectEventType.MIDDLEWARE_LOADED, (constructor: internal.IConstructable<internal.IActionMiddlewareInfo>) => {
+                const data: internal.IActionMiddlewareInfo = new constructor();
                 if (!data.priority) { data.priority = api.config.general.defaultMiddlewarePriority; }
                 data.priority = Number(data.priority);
                 api.actions.middleware[data.middlewareName] = data;
@@ -248,11 +250,11 @@ export const setupInitilizer = (moduleVar: any) => {
 
             const data = {
                 // tslint:disable:object-literal-key-quotes
-                "name" : "SH_Attributes_MW",
+                "name": "SH_Attributes_MW",
                 "global": true,
                 "priority": 0,
                 // tslint:disable-next-line:no-shadowed-variable
-                "preProcessor" : (data: any, next: any) => {
+                "preProcessor": (data: any, next: any) => {
                     data.attributes = {};
                     next();
                 },
