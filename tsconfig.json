@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "none",
+        "target": "es6",
+        "noImplicitAny": true,
+        "inlineSourceMap": true,
+        "noImplicitReturns": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "outDir": "dist",
+        "sourceRoot": "src"
+    }
+}
