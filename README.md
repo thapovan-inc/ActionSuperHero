@@ -61,6 +61,10 @@ import {Action, Api, ChainedFunction, IAction, IActionRequestData, Input} from "
     name: "user",
     required: false,
 })
+@Route({
+    path: "helloworld",
+    method: "get",
+})
 export class HelloWorld implements IAction {
     public run(api: Api, data: IActionRequestData, next: ChainedFunction): void {
         const name = data.params.user || "World";
