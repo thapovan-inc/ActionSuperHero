@@ -1,8 +1,8 @@
 {
-  "name": "SuperHero",
+  "name": "actionsuperhero",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/sdamodharan/SuperHero.git",
+  "repository": "https://github.com/sdamodharan/SuperStar.git",
   "author": "Sriram Damodharan <sdamodharan@thapovan-inc.com>",
   "license": "MIT",
   "engines": {
